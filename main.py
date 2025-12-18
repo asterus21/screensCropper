@@ -1,18 +1,23 @@
 from PIL import Image
 import files
 
-
+# upper pixel color
 TARGET_UPPER_0   = (187, 187, 187)
 TARGET_UPPER_1   = (186, 186, 186)
 TARGET_UPPER_2   = (112, 112, 112)
+# TARGET_UPPER_3   = (153, 153, 153)
 NEIGHBOUR_UPPER_0 = (239, 239, 239)
 NEIGHBOUR_UPPER_1 = (143, 143, 143)
+# NEIGHBOUR_UPPER_2 = (238, 238, 238)
 
+# lower pixel color
 TARGET_LOWER_0   = (176, 176, 176)
 TARGET_LOWER_1   = (175, 175, 175)
 TARGET_LOWER_2   = (106, 106, 106)
+# TARGET_LOWER_3   = (143, 143, 143)
 NEIGHBOUR_LOWER_0 = (238, 238, 238)
 NEIGHBOUR_LOWER_1 = (143, 143, 143)
+# NEIGHBOUR_LOWER_2 = (237, 237, 237)
 
 
 def get_targets(image, x, y):
@@ -71,6 +76,8 @@ def remove_nested_tuples(coordinates: list) -> list:
 def crop_corners(files: list, target_pixels: list) -> None:
     images = [Image.open(image) for image in files]
     for i in range(len(images)):
+        # skip empty coordinates
+        if not target_pixels[i]: continue
         crop = images[i].crop((
             target_pixels[i][0][0],
             target_pixels[i][0][1],
