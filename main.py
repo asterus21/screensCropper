@@ -24,16 +24,18 @@ from PIL import Image
 def get_list_of_files() -> list:
     # print('Enter a path to the folder containing screens (e.g. D:/py/screensCutter): ', end='')
     # user_input = input()
-    DEFAULT_PATH = 'D:/py/screensCutter'
+    DEFAULT_PATH = 'D:/py/screensCropper'
     files = [f for f in os.listdir(DEFAULT_PATH) if f.endswith('.png')]
     # print('files: ' + str(files))
     return files
 
 
 def find_target_pixels(file: bytes):
-    TARGET_UPPER = (186, 186, 186)
+    # TARGET_UPPER = (186, 186, 186)
+    TARGET_UPPER = (187, 187, 187)
     NEIGHBOR_UPPER = (239, 239, 239)
-    TARGET_LOWER = (175, 175, 175)
+    # TARGET_LOWER = (175, 175, 175)
+    TARGET_LOWER = (176, 176, 176)
     NEIGHBOR_LOWER = (238, 238, 238)
     image = Image.open(file).convert('RGB')
     width, height = image.size
@@ -51,7 +53,7 @@ def find_target_pixels(file: bytes):
             if pixel == TARGET_LOWER and pixel_left == NEIGHBOR_LOWER and pixel_up == NEIGHBOR_LOWER:
                 target_right_coordinates.append((x, y))
     coordinates = list(zip(target_left_coordinates, target_right_coordinates))
-    # print('coordinates: ' + str(coordinates))
+    print('coordinates: ' + str(coordinates))
     return coordinates
 
 
@@ -63,15 +65,14 @@ def crop_corners(file: bytes, target_pixels: tuple) -> None:
         target_pixels[0][1][0] + 1,
         target_pixels[0][1][1] + 1
         ))
-    crop.save(f'crop_test_2.png')
+    crop.save(f'crop_test.png')
 
 
 def main():
-    file = 'D:/py/screensCutter/Screenshot_3.png'
-    find_target_pixels('D:/py/screensCutter/Screenshot_3.png')
-    crop_corners(file, find_target_pixels('D:/py/screensCutter/Screenshot_3.png'))
+    file = 'D:/py/screensCropper/Screenshot_3.png'
+    find_target_pixels('D:/py/screensCropper/Screenshot_3.png')
+    crop_corners(file, find_target_pixels('D:/py/screensCropper/Screenshot_3.png'))
 
 
 if __name__ == '__main__':
-    # main()
-    pass
+    main()
