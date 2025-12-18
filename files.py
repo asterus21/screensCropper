@@ -26,12 +26,3 @@ def get_files_list(path=False) -> list:
         else:
             return files_list
     return is_empty(files(get_user_input())) if path else is_empty(files(os.getcwd()))
-
-
-# def main(path):
-#     x = get_files_list(path)
-#     print(x)
-# 
-# 
-# if __name__ == '__main__':
-#     main(path=False)

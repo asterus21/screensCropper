@@ -1,78 +1,89 @@
-import os
 from PIL import Image
+import files
 
 
-"""
-условный exe-файл закидывается в папку со скриншотами и запускается через терминал
-по умолчанию два ключевых аргумента булевого типа: path --false, source --false
-если передать path=true или не передавать, то скрипт будет брать скриншоты из текущей директори
-если передать source=true или не передавать, то исходные файлы будут перезаписаны
+TARGET_UPPER_0   = (187, 187, 187)
+TARGET_UPPER_1   = (186, 186, 186)
+TARGET_UPPER_2   = (112, 112, 112)
+NEIGHBOUR_UPPER_0 = (239, 239, 239)
+NEIGHBOUR_UPPER_1 = (143, 143, 143)
 
-после запуска скрипта проверять: есть ли png-файлы
-если нет - выходить, если есть - проверять: есть ли нужные пиксели сверху и снизу
-если нет - выходить, если есть - резать изображение
-
-проверять: есть ли пиксели только сверху, если есть - пропускать пиксели снизу
-проверять: есть ли пиксели только снизу, если есть - пропускать пиксели сверху
-
-выводить в консоль: 
-1) список файлов
-2) сообщение типа: screenshot_1.png was cropped
-3) сообщение о том, что скрипт завершен
-"""
-
-def get_list_of_files() -> list:
-    # print('Enter a path to the folder containing screens (e.g. D:/py/screensCutter): ', end='')
-    # user_input = input()
-    DEFAULT_PATH = 'D:/py/screensCropper'
-    files = [f for f in os.listdir(DEFAULT_PATH) if f.endswith('.png')]
-    # print('files: ' + str(files))
-    return files
+TARGET_LOWER_0   = (176, 176, 176)
+TARGET_LOWER_1   = (175, 175, 175)
+TARGET_LOWER_2   = (106, 106, 106)
+NEIGHBOUR_LOWER_0 = (238, 238, 238)
+NEIGHBOUR_LOWER_1 = (143, 143, 143)
 
 
-def find_target_pixels(file: bytes):
-    # TARGET_UPPER = (186, 186, 186)
-    TARGET_UPPER = (187, 187, 187)
-    NEIGHBOR_UPPER = (239, 239, 239)
-    # TARGET_LOWER = (175, 175, 175)
-    TARGET_LOWER = (176, 176, 176)
-    NEIGHBOR_LOWER = (238, 238, 238)
-    image = Image.open(file).convert('RGB')
-    width, height = image.size
-    target_left_coordinates = []
-    target_right_coordinates = []
-    for x in range(width - 1):
-        for y in range(height - 1):
-            pixel = image.getpixel((x, y))
-            pixel_right = image.getpixel((x + 1, y))
-            pixel_down = image.getpixel((x, y + 1))
-            pixel_left = image.getpixel((x - 1, y))
-            pixel_up = image.getpixel((x, y - 1))
-            if pixel == TARGET_UPPER and pixel_right == NEIGHBOR_UPPER and pixel_down == NEIGHBOR_UPPER:
-                target_left_coordinates.append((x, y))
-            if pixel == TARGET_LOWER and pixel_left == NEIGHBOR_LOWER and pixel_up == NEIGHBOR_LOWER:
-                target_right_coordinates.append((x, y))
-    coordinates = list(zip(target_left_coordinates, target_right_coordinates))
-    print('coordinates: ' + str(coordinates))
+def get_targets(image, x, y):
+    targets = {}
+    targets['target'] = image.getpixel((x, y))
+    targets['right'] = image.getpixel((x + 1, y))
+    targets['down'] = image.getpixel((x, y + 1))
+    targets['left'] = image.getpixel((x - 1, y))
+    targets['up'] = image.getpixel((x, y - 1))
+    return targets
+
+
+def find_target_pixels(files: list):
+    coordinates = []
+    for file in files:
+        image = Image.open(file).convert('RGB')
+        width, height = image.size
+        target_left_coordinates = []
+        target_right_coordinates = []
+        for x in range(width - 1):
+            for y in range(height - 1):
+                t = get_targets(image, x, y)
+                if ( 
+                        (
+                        t.get('target')     == TARGET_UPPER_0 
+                        or t.get('target')  == TARGET_UPPER_1 
+                        or t.get('target')  == TARGET_UPPER_2
+                        )                    
+                        and (t.get('right') == NEIGHBOUR_UPPER_0 or t.get('right') == NEIGHBOUR_UPPER_1)
+                        and (t.get('down')  == NEIGHBOUR_UPPER_0 or t.get('down')  == NEIGHBOUR_UPPER_1)
+                ): target_left_coordinates.append((x, y))                
+                if (
+                        (
+                        t.get('target')     == TARGET_LOWER_0
+                        or t.get('target')  == TARGET_LOWER_1 
+                        or t.get('target')  == TARGET_LOWER_2
+                        )
+                        and (t.get('left')  == NEIGHBOUR_LOWER_0 or t.get('left') == NEIGHBOUR_LOWER_1)
+                        and (t.get('up')    == NEIGHBOUR_LOWER_0 or t.get('up')   == NEIGHBOUR_LOWER_1)
+                ): target_right_coordinates.append((x, y))
+        c = list(zip(target_left_coordinates, target_right_coordinates))
+        coordinates.append(c)
     return coordinates
 
 
-def crop_corners(file: bytes, target_pixels: tuple) -> None:
-    image = Image.open(file)
-    crop = image.crop((
-        target_pixels[0][0][0],
-        target_pixels[0][0][1],
-        target_pixels[0][1][0] + 1,
-        target_pixels[0][1][1] + 1
-        ))
-    crop.save(f'crop_test.png')
+def remove_nested_tuples(coordinates: list) -> list:
+    coordinates = [
+        (item[0][0], item[1][1])
+        if len(item) == 2
+        else tuple(*item)
+        for item in coordinates
+        ]
+    return coordinates
 
 
-def main():
-    file = 'D:/py/screensCropper/Screenshot_3.png'
-    find_target_pixels('D:/py/screensCropper/Screenshot_3.png')
-    crop_corners(file, find_target_pixels('D:/py/screensCropper/Screenshot_3.png'))
+def crop_corners(files: list, target_pixels: list) -> None:
+    images = [Image.open(image) for image in files]
+    for i in range(len(images)):
+        crop = images[i].crop((
+            target_pixels[i][0][0],
+            target_pixels[i][0][1],
+            target_pixels[i][1][0] + 1,
+            target_pixels[i][1][1] + 1
+            ))
+        crop.save(f'cropped_image_{i}.png')
 
 
-if __name__ == '__main__':
-    main()
+def main(file):
+    coordinates = remove_nested_tuples(find_target_pixels(file))
+    crop_corners(file, coordinates)
+
+
+if __name__ == '__main__':    
+    main(files.get_files_list(path=False))
