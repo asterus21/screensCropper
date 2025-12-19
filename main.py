@@ -37,6 +37,7 @@ def get_targets(image, x, y):
 def find_target_pixels(files: list):
     coordinates = []
     for file in files:
+        print('Processing: ' + file)
         image = Image.open(file).convert('RGB')
         width, height = image.size
         target_left_coordinates = []
@@ -88,6 +89,7 @@ def remove_nested_tuples(coordinates: list) -> list:
 
 def crop_corners(files: list, target_pixels: list) -> None:
     images = [Image.open(image) for image in files]
+    file_number = 1
     for i in range(len(images)):
         # skip empty coordinates
         if not target_pixels[i]: continue
@@ -97,13 +99,14 @@ def crop_corners(files: list, target_pixels: list) -> None:
             target_pixels[i][1][0] + 1,
             target_pixels[i][1][1] + 1
             ))
-        # replace the original file names
-        crop.save(f'Screenshot_{i+1}.png')
+        crop.save(f'Cropped_{file_number}.png')
+        file_number += 1
 
 
 def main(files):
     f = remove_nested_tuples(find_target_pixels(files))
     crop_corners(files, f)
+    print('The script is finished.')
 
 
 if __name__ == '__main__':
