@@ -2,6 +2,9 @@ from PIL import Image
 import files
 
 
+time = files.get_time()
+
+
 # upper pixel color
 TARGET_UPPER_0    = (187, 187, 187)
 TARGET_UPPER_1    = (186, 186, 186)
@@ -37,7 +40,7 @@ def get_targets(image, x, y):
 def find_target_pixels(files: list):
     coordinates = []
     for file in files:
-        print('Processing: ' + file)
+        print(time, 'Processing: ' + file)
         image = Image.open(file).convert('RGB')
         width, height = image.size
         target_left_coordinates = []
@@ -106,8 +109,8 @@ def crop_corners(files: list, target_pixels: list) -> None:
 def main(files):
     f = remove_nested_tuples(find_target_pixels(files))
     crop_corners(files, f)
-    print('The script is finished.')
+    print(time, 'The script is finished.')
 
 
 if __name__ == '__main__':
-    main(files.get_files_list(path=False))
+    main(files.get_input())
