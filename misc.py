@@ -42,7 +42,9 @@ def get_input() -> str:
             sys.exit(0)
         case '':
             print(get_time(), 'Current directory is being used.')
-            return is_empty(files(os.getcwd()))
+            directory = os.getcwd()
+            files_list = is_empty(files(directory))            
+            return directory, files_list
         case _:
             directory = process_input(user_input)
             files_list = is_empty(files(directory))
