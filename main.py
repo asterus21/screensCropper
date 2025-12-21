@@ -39,7 +39,9 @@ def get_targets(image, x, y):
 
 def find_target_pixels(files: list):
     coordinates = []
-    for file in files:
+    print(time, 'Getting a list of files...')
+    print(time, 'There are ' + str(len(files)) + ' files found that match the pattern.')
+    for file in files:        
         print(time, 'Processing: ' + file)
         image = Image.open(file).convert('RGB')
         width, height = image.size
