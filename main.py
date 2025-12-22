@@ -2,7 +2,7 @@ import os
 from PIL import Image
 import misc
 
-
+# get current time
 time = misc.get_time()
 
 
@@ -28,6 +28,7 @@ NEIGHBOUR_LOWER_1 = (143, 143, 143)
 # NEIGHBOUR_LOWER_2 = (237, 237, 237)
 
 
+# find target pixels and their neighbours
 def get_targets(image, x, y):
     targets = {}
     targets['target'] = image.getpixel((x, y))
@@ -38,12 +39,14 @@ def get_targets(image, x, y):
     return targets
 
 
+# create a list of coordinates for the target pixels
 def find_target_pixels(directory, files: list):
     coordinates = []
     print(f'{misc.get_time()}', 'Getting a list of files...')
     print(f'{misc.get_time()}', 'There are ' + str(len(files)) + ' files found that match the pattern.')
     for file in files:
         print(f'{misc.get_time()}', 'Processing: ' + file)
+        # concatenate a path and file, e.g. 'D:/folder/screenshot_1.png')
         image_full_path = os.path.join(directory, file)
         image = Image.open(image_full_path).convert('RGB')
         width, height = image.size
@@ -82,6 +85,7 @@ def find_target_pixels(directory, files: list):
     return coordinates
 
 
+# unpack coordinates from an array of lists
 def remove_nested_tuples(coordinates: list) -> list:
     coordinates = [
         (item[0][0], item[-1][-1]) if len(item) >= 2
@@ -91,12 +95,13 @@ def remove_nested_tuples(coordinates: list) -> list:
     return coordinates
 
 
+# main logic of the script, i.e. image cropping
 def crop_corners(directory, files: list, target_pixels: list) -> None:    
     file_number = 1    
     for i in range(len(files)):
         # skip empty coordinates
         if not target_pixels[i]: continue
-        # images = [Image.open(image) for image in files]
+        # concatenate a path and file, e.g. 'D:/folder/screenshot_1.png')
         full_path = os.path.join(directory, files[i])
         image = Image.open(full_path)
         crop = image.crop((
@@ -107,6 +112,7 @@ def crop_corners(directory, files: list, target_pixels: list) -> None:
             ))
         crop.save(f'Cropped_{file_number}.png')
         file_number += 1
+
 
 
 def main(directory, files):

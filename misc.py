@@ -4,13 +4,14 @@ import sys
 from pathlib import Path
 
 
-def get_time():
+def get_time() -> str:
     now = datetime.datetime.now()
     formatted_time = now.strftime("%Y-%m-%d %H:%M:%S")
     return formatted_time
 
 
-def close_script():
+def close_script() -> None:
+    # add an empty line before the closing statetement
     print()
     input('Press Enter to close the program.')
     sys.exit(0)
@@ -18,6 +19,7 @@ def close_script():
 
 def process_input(user_input: str) -> str:
     p = Path(user_input)
+    # check of the object exists and if it is a folder
     if p.exists() and p.is_dir():
         return user_input
     else:
@@ -27,14 +29,18 @@ def process_input(user_input: str) -> str:
 
 
 def get_input() -> str:
+    # create a list of files in the folder
     files = lambda folder: [file for file in os.listdir(folder) if file.lower().endswith('.png')]
-    def is_empty(files_list):
+    # check if the folder is empty
+    def is_empty(files_list) -> list:
         if not files_list:
-            print(get_time(), 'The list of files to process is empty. The program is about to close.')
+            print(get_time(), 'The folder is empty. The program is about to close.')
             close_script()      
         else: return files_list
     user_input = input('Enter a path to the PNG files to crop (e.g. D:/screens) or press Enter to use a current directory (type exit to quit): ')
+    # add an empty line before the script start
     print()
+    # check for a single volume letter
     if user_input.endswith(':'): user_input = user_input + '/'
     match user_input:
         case 'exit':
@@ -45,7 +51,9 @@ def get_input() -> str:
             directory = os.getcwd()
             files_list = is_empty(files(directory))            
             return directory, files_list
+        # match the user input
         case _:
             directory = process_input(user_input)
             files_list = is_empty(files(directory))
+            # e.g. (D:/folder, [screenshot_1.png, screenshot_2.png, ...])
             return directory, files_list
