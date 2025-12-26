@@ -41,7 +41,7 @@ def get_targets(image, x, y):
 
 # create a list of coordinates for the target pixels
 def find_target_pixels(directory, files: list):
-    coordinates = []
+    c = []
     print(f'{misc.get_time()}', 'Getting a list of files...')
     print(f'{misc.get_time()}', 'There are ' + str(len(files)) + ' files found that match the pattern.')
     for file in files:
@@ -79,24 +79,35 @@ def find_target_pixels(directory, files: list):
                         and (
                             t.get('up')    == NEIGHBOUR_LOWER_0 or t.get('up')   == NEIGHBOUR_LOWER_1)
                 ): target_right_coordinates.append((x, y))
-        c = list(zip(target_left_coordinates, target_right_coordinates))
-        coordinates.append(c)
+        coordinates = target_left_coordinates + target_right_coordinates
+        c.append(coordinates)
+        # print(coordinates)
+    # print(c)
+    # print(len(c))   
     # for i in range(1, len(files)): print(f'{i}: ' + str(files[i]) + ' : ' + str(coordinates[i]))
-    return coordinates
+    return c
 
 
-# unpack coordinates from an array of lists
-def remove_nested_tuples(coordinates: list) -> list:
+# # unpack coordinates from an array of lists
+# def remove_nested_tuples(coordinates: list) -> list:
+#     coordinates = [
+#         (item[0][0], item[-1][-1]) if len(item) >= 2
+#         else tuple(*item)
+#         for item in coordinates
+#         ]
+#     return coordinates
+
+
+def edit_coordinates_lists(coordinates: list) -> list:
+    # print(coordinates)
     coordinates = [
-        (item[0][0], item[-1][-1]) if len(item) >= 2
-        else tuple(*item)
-        for item in coordinates
-        ]
+        (item[0], item[-1]) for item in coordinates
+    ]
+    # print(coordinates)
     return coordinates
-
 
 # main logic of the script, i.e. image cropping
-def crop_corners(directory, files: list, target_pixels: list) -> None:    
+def crop_corners(directory, files: list, target_pixels: list) -> None:
     file_number = 1    
     for i in range(len(files)):
         # skip empty coordinates
@@ -114,9 +125,9 @@ def crop_corners(directory, files: list, target_pixels: list) -> None:
         file_number += 1
 
 
-
 def main(directory, files):
-    f = remove_nested_tuples(find_target_pixels(directory, files))
+    # f = remove_nested_tuples(find_target_pixels(directory, files))
+    f = edit_coordinates_lists(find_target_pixels(directory, files))
     crop_corners(directory, files, f)
     print(f'{misc.get_time()}', 'The script is finished.')
     misc.close_script()
