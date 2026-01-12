@@ -13,6 +13,7 @@ TARGET_UPPER_2    = (112, 112, 112)
 # TARGET_UPPER_3    = (153, 153, 153)
 TARGET_UPPER_4    = (182, 182, 182)
 TARGET_UPPER_5    = (162, 162, 162)
+TARGET_UPPER_6    = (111, 111, 111)
 NEIGHBOUR_UPPER_0 = (239, 239, 239)
 NEIGHBOUR_UPPER_1 = (143, 143, 143)
 NEIGHBOUR_UPPER_2 = (238, 238, 238)
@@ -23,6 +24,7 @@ TARGET_LOWER_2    = (106, 106, 106)
 # TARGET_LOWER_3    = (143, 143, 143)
 TARGET_LOWER_4    = (173, 173, 173)
 TARGET_LOWER_5    = (151, 151, 151)
+TARGET_LOWER_6    = (105, 105, 105)
 NEIGHBOUR_LOWER_0 = (238, 238, 238)
 NEIGHBOUR_LOWER_1 = (143, 143, 143)
 # NEIGHBOUR_LOWER_2 = (237, 237, 237)
@@ -62,6 +64,7 @@ def find_target_pixels(directory, files: list):
                         or t.get('target')  == TARGET_UPPER_2
                         or t.get('target')  == TARGET_UPPER_4
                         or t.get('target')  == TARGET_UPPER_5
+                        or t.get('target')  == TARGET_UPPER_6
                         )
                         and (t.get('right') == NEIGHBOUR_UPPER_0 or t.get('right') == NEIGHBOUR_UPPER_1 or t.get('right') == NEIGHBOUR_UPPER_2)
                         and (t.get('down')  == NEIGHBOUR_UPPER_0 or t.get('down')  == NEIGHBOUR_UPPER_1 or t.get('down') == NEIGHBOUR_UPPER_2)
@@ -73,6 +76,7 @@ def find_target_pixels(directory, files: list):
                         or t.get('target')  == TARGET_LOWER_2
                         or t.get('target')  == TARGET_LOWER_4
                         or t.get('target')  == TARGET_LOWER_5
+                        or t.get('target')  == TARGET_LOWER_6
                         )
                         and (
                             t.get('left')  == NEIGHBOUR_LOWER_0 or t.get('left') == NEIGHBOUR_LOWER_1)
@@ -84,7 +88,7 @@ def find_target_pixels(directory, files: list):
         # print(coordinates)
     # print(c)
     # print(len(c))   
-    # for i in range(1, len(files)): print(f'{i}: ' + str(files[i]) + ' : ' + str(coordinates[i]))
+    # for i in range(0, len(files)): print(f'{i}: ' + str(files[i]) + ' : ' + str(coordinates[i]))
     return c
 
 
