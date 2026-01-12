@@ -91,7 +91,7 @@ def edit_coordinates_lists(coordinates: list) -> list:
 
 # main logic of the script, i.e. image cropping
 def crop_corners(directory, files: list, target_pixels: list) -> None:
-    file_number = 1    
+    file_number = 1
     for i in range(len(files)):
         # skip empty coordinates
         if not target_pixels[i]:
