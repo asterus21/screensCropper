@@ -81,29 +81,37 @@ def find_target_pixels(directory: str, files: list) -> list:
                         )
                 ): target_right_coordinates.append((x, y))
         coordinates = target_left_coordinates + target_right_coordinates
-        # print(coordinates)
         c.append(coordinates)
-    # c = [(item[0], item[-1]) for item in c if item]
     # print(c)
+    # print(files)
     # for i in range(0, len(files)): print(f'{i}: ' + str(files[i]) + ' : ' + str(c[i]))
     return c
 
 
+def remove_empty_targets(coordinates, files):
+    s = {str(files[i]): coordinates[i] for i in range(0, len(files)) if coordinates[i]}
+    # print(s)
+    return s
+
+
 def edit_coordinates_lists(coordinates: list) -> list:
-    # print(coordinates)
     coordinates = [
         (item[0], item[-1]) for item in coordinates if item
     ]
-    # print(coordinates)
-    # print(len(coordinates))
     return coordinates
 
-# TODO: нужно сделать функцию, которая принимает список файлов
-# ищет целевые пиксели для каждого файла
-# и возвращает новый список файлов
-# только с теми файлами, где есть целевые пиксели
-# а потом этот список нужно использовать в функции crop_corners()
-# потому что сейчас обрезаются все файлы
+
+def edit_coordinates_list_as_dictionary(coordinates: dict):
+    coordinates = [
+        (item[0], item[-1]) for item in coordinates.values() if item
+    ]
+    # print(coordinates)
+    return coordinates
+
+
+def get_new_list_of_files(files: dict) -> list:
+    # print(list(files.keys()))
+    return(list(files.keys()))
 
 
 # main logic of the script, i.e. image cropping
@@ -131,14 +139,14 @@ def crop_corners(directory, files: list, target_pixels: list) -> None:
 
 def main(directory, files):
     targets = find_target_pixels(directory, files)
-    coordinates = edit_coordinates_lists(targets)
-    # print(coordinates)
+    dictionary = remove_empty_targets(targets, files)
+    coordinates = edit_coordinates_list_as_dictionary(dictionary)
+    new_list_of_files = get_new_list_of_files(dictionary)
 
     # main logic of the program
-    # crop_corners(directory, files, coordinates)
-    crop_corners(directory, files, targets)
-
+    crop_corners(directory, new_list_of_files, coordinates)
     print(f'{misc.get_time()}', 'The script is finished.')
+
     # close the script
     misc.close_script()
 
