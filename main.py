@@ -12,6 +12,7 @@ target_upper_neighbor = data.get_upper_neighbors()
 target_lower = data.get_lower_target()
 target_lower_neighbor = data.get_lower_neighbors()
 
+
 # find target pixels and their neighbours
 def get_targets(image: any, x: int, y: int) -> dict:
     targets = dict(
@@ -71,28 +72,47 @@ def find_target_pixels(directory: str, files: list) -> list:
                         and ( 
                             t.get('left')     == target_lower_neighbor.get('neighbor_0')
                             or t.get('left')  == target_lower_neighbor.get('neighbor_1')
+                            or t.get('left')  == target_lower_neighbor.get('neighbor_2')
                         )
                         and ( 
                             t.get('up')       == target_lower_neighbor.get('neighbor_0')
                             or t.get('up')    == target_lower_neighbor.get('neighbor_1')
+                            or t.get('up')    == target_lower_neighbor.get('neighbor_2')
                         )
                 ): target_right_coordinates.append((x, y))
         coordinates = target_left_coordinates + target_right_coordinates
+        # print(coordinates)
         c.append(coordinates)
-    # for i in range(0, len(files)): print(f'{i}: ' + str(files[i]) + ' : ' + str(coordinates[i]))
+    # c = [(item[0], item[-1]) for item in c if item]
+    # print(c)
+    # for i in range(0, len(files)): print(f'{i}: ' + str(files[i]) + ' : ' + str(c[i]))
     return c
 
 
 def edit_coordinates_lists(coordinates: list) -> list:
+    # print(coordinates)
     coordinates = [
-        (item[0], item[-1]) for item in coordinates
+        (item[0], item[-1]) for item in coordinates if item
     ]
+    # print(coordinates)
+    # print(len(coordinates))
     return coordinates
+
+# TODO: нужно сделать функцию, которая принимает список файлов
+# ищет целевые пиксели для каждого файла
+# и возвращает новый список файлов
+# только с теми файлами, где есть целевые пиксели
+# а потом этот список нужно использовать в функции crop_corners()
+# потому что сейчас обрезаются все файлы
+
 
 # main logic of the script, i.e. image cropping
 def crop_corners(directory, files: list, target_pixels: list) -> None:
     file_number = 1
+    # print(len(files))
+    # print(len(target_pixels))
     for i in range(len(files)):
+    # for i in range(len(target_pixels)):
         # skip empty coordinates
         if not target_pixels[i]:
             continue
@@ -112,8 +132,12 @@ def crop_corners(directory, files: list, target_pixels: list) -> None:
 def main(directory, files):
     targets = find_target_pixels(directory, files)
     coordinates = edit_coordinates_lists(targets)
+    # print(coordinates)
+
     # main logic of the program
-    crop_corners(directory, files, coordinates)
+    # crop_corners(directory, files, coordinates)
+    crop_corners(directory, files, targets)
+
     print(f'{misc.get_time()}', 'The script is finished.')
     # close the script
     misc.close_script()
