@@ -1,18 +1,19 @@
 '''The script is aimed to crop wizard windows of the PolyAnalyst nodes.'''
 
+
 import os
 from PIL import Image
 import data
 import misc
 
 # import target colors
-target_upper          = data.get_upper_target()
+target_upper = data.get_upper_target()
 target_upper_neighbor = data.get_upper_neighbors()
-target_lower          = data.get_lower_target()
+target_lower = data.get_lower_target()
 target_lower_neighbor = data.get_lower_neighbors()
 
 # find target pixels and their neighbours
-def get_targets(image, x: int, y: int) -> dict:
+def get_targets(image: any, x: int, y: int) -> dict:
     targets = dict(
         target = image.getpixel((x, y)),
         right  = image.getpixel((x + 1, y)),
@@ -91,12 +92,12 @@ def remove_empty_targets(coordinates: list, files: list) -> dict:
     return s
 
 
-def edit_coordinates_list_as_dictionary(coordinates: dict) -> list:
+def edit_coordinates_list_as_dictionary(coordinates: dict) -> dict:
     # fetch only the first and the last targets in case there are several ones
-    coordinates_list = [
+    coordinates = [
         (item[0], item[-1]) for item in coordinates.values() if item
     ]
-    return coordinates_list
+    return coordinates
 
 
 def get_new_list_of_files(files: dict) -> list:
@@ -112,7 +113,6 @@ def crop_corners(directory: str, files: list, target_pixels: list) -> None:
         if not target_pixels[i]: continue
         # concatenate a path and file, e.g. 'D:/folder/screenshot_1.png')
         image = Image.open(os.path.join(directory, files[i]))
-        # main logic of the script, i.e. screens cropping
         crop = image.crop((
             target_pixels[i][0][0],
             target_pixels[i][0][1],
