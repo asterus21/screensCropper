@@ -12,7 +12,6 @@ target_upper_neighbor = data.get_upper_neighbors()
 target_lower = data.get_lower_target()
 target_lower_neighbor = data.get_lower_neighbors()
 
-
 # find target pixels and their neighbours
 def get_targets(image: any, x: int, y: int) -> dict:
     targets = dict(
@@ -26,14 +25,13 @@ def get_targets(image: any, x: int, y: int) -> dict:
 
 # create a list of coordinates for the target pixels
 def find_target_pixels(directory: str, files: list) -> list:
-    c = []
-    print(f'{misc.get_time()}', 'Getting a list of files...')
-    print(f'{misc.get_time()}', 'There are ' + str(len(files)) + ' files found that match the pattern.')
+    targets = []
+    print(f'{misc.print_time()}', 'Getting a list of files...')
+    print(f'{misc.print_time()}', 'There ' + str(len(files)) + ' file(s) found that match the pattern.')
     for file in files:
-        print(f'{misc.get_time()}', 'Processing: ' + file)
+        print(f'{misc.print_time()}', 'Processing: ' + file)
         # concatenate a path and file, e.g. 'D:/folder/screenshot_1.png')
-        image_full_path = os.path.join(directory, file)
-        image = Image.open(image_full_path).convert('RGB')
+        image = Image.open(os.path.join(directory, file)).convert('RGB')
         width, height = image.size
         target_left_coordinates = []
         target_right_coordinates = []
@@ -81,52 +79,40 @@ def find_target_pixels(directory: str, files: list) -> list:
                         )
                 ): target_right_coordinates.append((x, y))
         coordinates = target_left_coordinates + target_right_coordinates
-        c.append(coordinates)
-    # print(c)
-    # print(files)
+        targets.append(coordinates)
     # for i in range(0, len(files)): print(f'{i}: ' + str(files[i]) + ' : ' + str(c[i]))
-    return c
+    return targets
 
 
-def remove_empty_targets(coordinates, files):
-    s = {str(files[i]): coordinates[i] for i in range(0, len(files)) if coordinates[i]}
-    # print(s)
+def remove_empty_targets(coordinates: list, files: list) -> dict:
+    # get a dictionary with file names as keys and their coordinates as values
+    s = {
+        str(files[i]): coordinates[i] for i in range(0, len(files)) if coordinates[i]
+    }
     return s
 
 
-def edit_coordinates_lists(coordinates: list) -> list:
-    coordinates = [
-        (item[0], item[-1]) for item in coordinates if item
-    ]
-    return coordinates
-
-
-def edit_coordinates_list_as_dictionary(coordinates: dict):
+def edit_coordinates_list_as_dictionary(coordinates: dict) -> dict:
+    # fetch only the first and the last targets in case there are several ones
     coordinates = [
         (item[0], item[-1]) for item in coordinates.values() if item
     ]
-    # print(coordinates)
     return coordinates
 
 
 def get_new_list_of_files(files: dict) -> list:
-    # print(list(files.keys()))
+    # fetch only the keys of the dictionary, i.e. files names
     return(list(files.keys()))
 
 
 # main logic of the script, i.e. image cropping
-def crop_corners(directory, files: list, target_pixels: list) -> None:
+def crop_corners(directory: str, files: list, target_pixels: list) -> None:
     file_number = 1
-    # print(len(files))
-    # print(len(target_pixels))
     for i in range(len(files)):
-    # for i in range(len(target_pixels)):
         # skip empty coordinates
-        if not target_pixels[i]:
-            continue
+        if not target_pixels[i]: continue
         # concatenate a path and file, e.g. 'D:/folder/screenshot_1.png')
-        full_path = os.path.join(directory, files[i])
-        image = Image.open(full_path)
+        image = Image.open(os.path.join(directory, files[i]))
         crop = image.crop((
             target_pixels[i][0][0],
             target_pixels[i][0][1],
@@ -138,20 +124,24 @@ def crop_corners(directory, files: list, target_pixels: list) -> None:
 
 
 def main(directory, files):
+    # find target pixels
     targets = find_target_pixels(directory, files)
+    # create a dictionary with names of files and pixel coordinates
     dictionary = remove_empty_targets(targets, files)
+    # save pixel coordinates
     coordinates = edit_coordinates_list_as_dictionary(dictionary)
+    # find only those files which contain target pixels
     new_list_of_files = get_new_list_of_files(dictionary)
-
     # main logic of the program
     crop_corners(directory, new_list_of_files, coordinates)
-    print(f'{misc.get_time()}', 'The script is finished.')
-
+    # show that the script is finished
+    print(f'{misc.print_time()}', 'The script is finished.')
     # close the script
     misc.close_script()
 
 
 if __name__ == '__main__':
+    # get the user's input
     directory, files_list = misc.get_input()
     # start the main script
     main(directory, files_list)

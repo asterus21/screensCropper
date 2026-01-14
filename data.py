@@ -25,7 +25,7 @@ def get_upper_neighbors() -> dict:
     return targets
 
 def get_lower_target() -> dict:
-    '''Contains lower neighbors colors.'''
+    '''Contains lower targets colors.'''
     targets = {
         'lower_0' : (176, 176, 176),
         'lower_1' : (175, 175, 175),
@@ -39,7 +39,7 @@ def get_lower_target() -> dict:
     return targets
 
 def get_lower_neighbors() -> dict:
-    '''Contains lower targets colors.'''
+    '''Contains lower neighbors colors.'''
     targets = {
         'neighbor_0' : (238, 238, 238),
         'neighbor_1' : (143, 143, 143),
