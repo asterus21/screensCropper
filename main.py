@@ -93,12 +93,12 @@ def remove_empty_targets(coordinates: list, files: list) -> dict:
     return s
 
 
-def edit_coordinates_list_as_dictionary(coordinates: dict) -> dict:
+def edit_coordinates_list_as_dictionary(coordinates: dict) -> list:
     # fetch only the first and the last targets in case there are several ones
-    coordinates = [
+    coors = [
         (item[0], item[-1]) for item in coordinates.values() if item
     ]
-    return coordinates
+    return coors
 
 
 def get_new_list_of_files(files: dict) -> list:
