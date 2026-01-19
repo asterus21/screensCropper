@@ -40,42 +40,43 @@ def find_target_pixels(directory: str, files: list) -> list:
                 t = get_targets(image, x, y)
                 if (
                         (
-                        t.get('target')       == target_upper.get('upper_0')
-                        or t.get('target')    == target_upper.get('upper_1')
-                        or t.get('target')    == target_upper.get('upper_2')
-                        or t.get('target')    == target_upper.get('upper_4')
-                        or t.get('target')    == target_upper.get('upper_5')
-                        or t.get('target')    == target_upper.get('upper_6')
+                        t.get('target') == target_upper.get('upper_0') or 
+                        t.get('target') == target_upper.get('upper_1') or 
+                        t.get('target') == target_upper.get('upper_2') or 
+                        t.get('target') == target_upper.get('upper_4') or 
+                        t.get('target') == target_upper.get('upper_5') or 
+                        t.get('target') == target_upper.get('upper_6')
+                        ) and 
+                        (
+                        t.get('right')  == target_upper_neighbor.get('neighbor_0') or 
+                        t.get('right')  == target_upper_neighbor.get('neighbor_1') or 
+                        t.get('right')  == target_upper_neighbor.get('neighbor_2')
                         )
-                        and (
-                            t.get('right')    == target_upper_neighbor.get('neighbor_0')
-                            or t.get('right') == target_upper_neighbor.get('neighbor_1')
-                            or t.get('right') == target_upper_neighbor.get('neighbor_2')
-                        )
-                        and (
-                            t.get('down')     == target_upper_neighbor.get('neighbor_0')
-                            or t.get('down')  == target_upper_neighbor.get('neighbor_1')
-                            or t.get('down')  == target_upper_neighbor.get('neighbor_2')
+                        and 
+                        (
+                        t.get('down')   == target_upper_neighbor.get('neighbor_0') or 
+                        t.get('down')   == target_upper_neighbor.get('neighbor_1') or 
+                        t.get('down')   == target_upper_neighbor.get('neighbor_2')
                         )
                 ): target_left_coordinates.append((x, y))
                 if (
                         (
-                        t.get('target')       == target_lower.get('lower_0')
-                        or t.get('target')    == target_lower.get('lower_1')
-                        or t.get('target')    == target_lower.get('lower_2')
-                        or t.get('target')    == target_lower.get('lower_4')
-                        or t.get('target')    == target_lower.get('lower_5')
-                        or t.get('target')    == target_lower.get('lower_6')
-                        )
-                        and ( 
-                            t.get('left')     == target_lower_neighbor.get('neighbor_0')
-                            or t.get('left')  == target_lower_neighbor.get('neighbor_1')
-                            or t.get('left')  == target_lower_neighbor.get('neighbor_2')
-                        )
-                        and ( 
-                            t.get('up')       == target_lower_neighbor.get('neighbor_0')
-                            or t.get('up')    == target_lower_neighbor.get('neighbor_1')
-                            or t.get('up')    == target_lower_neighbor.get('neighbor_2')
+                        t.get('target') == target_lower.get('lower_0') or
+                        t.get('target') == target_lower.get('lower_1') or
+                        t.get('target') == target_lower.get('lower_2') or
+                        t.get('target') == target_lower.get('lower_4') or
+                        t.get('target') == target_lower.get('lower_5') or
+                        t.get('target') == target_lower.get('lower_6')
+                        ) and 
+                        ( 
+                        t.get('left')   == target_lower_neighbor.get('neighbor_0') or
+                        t.get('left')   == target_lower_neighbor.get('neighbor_1') or
+                        t.get('left')   == target_lower_neighbor.get('neighbor_2')
+                        ) and
+                        ( 
+                        t.get('up')     == target_lower_neighbor.get('neighbor_0') or
+                        t.get('up')     == target_lower_neighbor.get('neighbor_1') or
+                        t.get('up')     == target_lower_neighbor.get('neighbor_2')
                         )
                 ): target_right_coordinates.append((x, y))
         coordinates = target_left_coordinates + target_right_coordinates
