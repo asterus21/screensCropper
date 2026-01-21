@@ -126,7 +126,8 @@ def crop_corners(directory: str, files: list, target_pixels: list) -> None:
             ))
         crop.save(f'Cropped_{file_number}.png')
         file_number += 1
-
+    cropped_files = [file for file in os.listdir(directory) if file.startswith('Cropped_')]
+    print(f'{misc.print_time()}', str(len(cropped_files)) + ' file(s) processed.')
 
 def main(directory, files):
     # find target pixels
